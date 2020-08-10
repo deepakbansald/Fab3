@@ -1,7 +1,7 @@
 ---
   - name: "Building multipod access policy for Fab3"
     hosts: apic1
-    connection: local
+    
     gather_facts: no
     tasks:
         - name: "Creatign a vlan pool name Multipod-vlan "
