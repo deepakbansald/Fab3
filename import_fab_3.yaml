@@ -8,10 +8,7 @@
   - name: "Creating a Import policy "
     hosts: apic1
     gather_facts: no
-    vars_prompt:
-            - name: "file"
-              prompt: "Enter the file name of the backup file"
-              private: no
+   
     tasks:
       -  name: "Creating a remote path from where you have the back-up config"
          aci_rest:
@@ -53,7 +50,7 @@
                    "attributes":{
                          "dn":"uni/fabric/configimp-deepakba_test",
                          "name":"deepakba_test",
-                         "fileName":"{{file}}",
+                         "fileName":"ce2_Fab3_DailyAutoBackup-2020-08-09T01-00-57.tar.gz",
                          "importType":"merge",
                          "adminSt":"triggered"
                              },
