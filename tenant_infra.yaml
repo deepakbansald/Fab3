@@ -258,7 +258,7 @@
                          mtu: inherit
       - name: "Creating Sub interfaces on Spine interface node 201"
         aci_rest:
-                   hostname: "apic1
+                   hostname: apic1
                    username: "{{username}}"
                    password: "{{password}}"
                    validate_certs: false
