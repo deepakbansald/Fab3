@@ -6,7 +6,7 @@
     tasks:
         - name: "Creatign a vlan pool name Multipod-vlan "
           aci_vlan_pool:
-            hostname: "{{hostname}}"
+            hostname: apic1
             username: "{{username}}"
             password: "{{password}}"
             validate_certs: false
@@ -16,7 +16,7 @@
             state: present
         - name: "creating encap block vlan range 2-10"
           aci_vlan_pool_encap_block:
-              hostname: "{{hostname}}"
+              hostname: apic1
               username: "{{username}}"
               password: "{{password}}"
               validate_certs: false
@@ -28,7 +28,7 @@
               state: present
         - name: "Creating Layer3 Domain name Multipod-L3 "
           aci_domain:
-              hostname: "{{hostname}}"
+              hostname: apic1
               username: "{{username}}"
               password: "{{password}}"
               validate_certs: false
@@ -37,7 +37,7 @@
               state: present
         - name: "Associating vlan pool Multipod-vlan to domain Multipod-L3"             # here im associating the vlan pool to domain
           aci_domain_to_vlan_pool:
-              hostname: "{{hostname}}"
+              hostname: apic1
               username: "{{username}}"
               password: "{{password}}"
               validate_certs: false
@@ -48,7 +48,7 @@
               state: present
         - name: "Creating ACI AEP name AAEP-Multipod "
           aci_aep:
-              hostname: "{{hostname}}"
+              hostname: apic1
               username: "{{username}}"
               password: "{{password}}"
               validate_certs: false
@@ -56,7 +56,7 @@
               state: present
         - name: "Associating AEP to Domain"
           aci_aep_to_domain:
-              hostname: "{{hostname}}"
+              hostname: apic1
               username: "{{username}}"
               password: "{{password}}"
               validate_certs: false
@@ -66,7 +66,7 @@
               state: present
         - name: "Creating Access Interface Policy group for the spine Interface"
           aci_rest:
-              hostname: "{{hostname}}"
+              hostname: apic1
               username: "{{username}}"
               password: "{{password}}"
               validate_certs: false
@@ -78,7 +78,7 @@
                     name: Spine-IPN-If-Pol-1
         - name: "Assigning AAEP to SPine interface policy-group"
           aci_rest:
-            hostname: "{{hostname}}"
+            hostname: apic1
             username: "{{username}}"
             password: "{{password}}"
             validate_certs: false
@@ -90,7 +90,7 @@
                     tDn: uni/infra/attentp-AAEP-Multipod-1
         - name: "Creating Spine intefrace profile"
           aci_rest:
-            hostname: "{{hostname}}"
+            hostname: apic1
             username: "{{username}}"
             password: "{{password}}"
             validate_certs: false
@@ -102,7 +102,7 @@
                     name: spine_IPN-Link-1
         - name: "Creating Spine intefrace selector name"
           aci_rest:
-             hostname: "{{hostname}}"
+             hostname: apic1
              username: "{{username}}"
              password: "{{password}}"
              validate_certs: false
@@ -115,7 +115,7 @@
                      type: range
         - name: "Assigning policy-group to Spine profile"
           aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -127,7 +127,7 @@
                      tDn: uni/infra/funcprof/spaccportgrp-Spine-IPN-If-Pol-1
         - name: "selecting interface e1/16 on  Spine profile"
           aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -143,7 +143,7 @@
                      fromPort: "16"
         - name: "creating Spine switch profile"
           aci_rest:
-            hostname: "{{hostname}}"
+            hostname: apic1
             username: "{{username}}"
             password: "{{password}}"
             validate_certs: false
@@ -155,7 +155,7 @@
                     name: AllSpine_1
         - name: "creating Spine switch selector"
           aci_rest:
-            hostname: "{{hostname}}"
+            hostname: apic1
             username: "{{username}}"
             password: "{{password}}"
             validate_certs: false
@@ -168,7 +168,7 @@
                     type: range
         - name: "Assigning interface profile to spine switch profile"
           aci_rest:
-                 hostname: "{{hostname}}"
+                 hostname: apic1
                  username: "{{username}}"
                  password: "{{password}}"
                  validate_certs: false
@@ -180,7 +180,7 @@
                          tDn: uni/infra/spaccportprof-spine_IPN-Link-1
         - name: "Selecting spines in  spine switch profile"
           aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -194,7 +194,7 @@
                        to_: "202"
         - name: "Creating Pod 2 Tep pool "
           aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -207,7 +207,7 @@
                        tepPool: "10.1.0.0/16"
         - name: "Creating Fabric external profile"
           aci_rest:
-             hostname: "{{hostname}}"
+             hostname: apic1
              username: "{{username}}"
              password: "{{password}}"
              validate_certs: false
