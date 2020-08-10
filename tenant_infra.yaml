@@ -1,12 +1,12 @@
 ---
   - name: "Building multipod Infra Tenant policy for Fab3"
     hosts: apic1
-    connection: local
+    
     gather_facts: no
     tasks:
       - name: "Creating Multipod l3out "
         aci_rest:
-         hostname: "{{hostname}}"
+         hostname: apic1
          username: "{{username}}"
          password: "{{password}}"
          validate_certs: false
@@ -18,7 +18,7 @@
                name: multipod
       - name: "Associating Domain to L3out Multipod"
         aci_rest:
-         hostname: "{{hostname}}"
+         hostname: apic1
          username: "{{username}}"
          password: "{{password}}"
          validate_certs: false
@@ -30,7 +30,7 @@
                  tDn: uni/l3dom-Multipod-L3_1
       - name: "Associating VRF overlay-1 to L3out Multipod"
         aci_rest:
-         hostname: "{{hostname}}"
+         hostname: apic1
          username: "{{username}}"
          password: "{{password}}"
          validate_certs: false
@@ -42,7 +42,7 @@
                  tnFvCtxName: overlay-1
       - name: "Creating node profile for spine:201,202 and Pod2-spine"
         aci_rest:
-         hostname: "{{hostname}}"
+         hostname: apic1
          username: "{{username}}"
          password: "{{password}}"
          validate_certs: false
@@ -54,7 +54,7 @@
                  name: bSpine
       - name: "creating OSPF profile in multipod"
         aci_rest:
-         hostname: "{{hostname}}"
+         hostname: apic1
          username: "{{username}}"
          password: "{{password}}"
          validate_certs: false
@@ -69,7 +69,7 @@
                  areaType: regular
       - name: "creating BGP profile in multipod"
         aci_rest:
-         hostname: "{{hostname}}"
+         hostname: apic1
          username: "{{username}}"
          password: "{{password}}"
          validate_certs: false
@@ -81,7 +81,7 @@
                  descr: " "
       - name: "Creating Router-Id for Node 202 "
         aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -94,7 +94,7 @@
                        tDn: topology/pod-1/node-202
       - name: "Creating Router-Id for Node 201 "
         aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -107,7 +107,7 @@
                        tDn: topology/pod-1/node-201
       - name: "Creating Router-Id for  node-1201 "
         aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -120,7 +120,7 @@
                        tDn: topology/pod-2/node-1201
       - name: "Creating loopback-Id for Node 202 "
         aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -132,7 +132,7 @@
                        rn: lbp-[172.16.100.202]
       - name: "Creating loopback-Id for Node 201 "
         aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -144,7 +144,7 @@
                        rn: lbp-[172.16.100.201]
       - name: "Creating loopback-Id for Node 1201 "
         aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -156,7 +156,7 @@
                        rn: lbp-[172.16.200.201]
       - name: "Fabric external control peering checkbox mark for node 202 "
         aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -168,7 +168,7 @@
                        descr: ""
       - name: "Fabric external control peering checkbox mark for node 201 "
         aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -180,7 +180,7 @@
                        descr: ""
       - name: "Fabric external control peering checkbox mark for node 1201  "
         aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -192,7 +192,7 @@
                        descr: ""
       - name: "Creating Logical interface profile on L3out Multipod"
         aci_rest:
-                 hostname: "{{hostname}}"
+                 hostname: apic1
                  username: "{{username}}"
                  password: "{{password}}"
                  validate_certs: false
@@ -204,7 +204,7 @@
                          name: portIf
       - name: "Creating Sub interfaces on Spine interface node 202"
         aci_rest:
-               hostname: "{{hostname}}"
+               hostname: apic1
                username: "{{username}}"
                password: "{{password}}"
                validate_certs: false
@@ -222,7 +222,7 @@
                        mtu: inherit
       - name: "Creating Sub interfaces on Spine interface node 1201"
         aci_rest:
-                 hostname: "{{hostname}}"
+                 hostname: apic1
                  username: "{{username}}"
                  password: "{{password}}"
                  validate_certs: false
@@ -240,7 +240,7 @@
                          mtu: inherit
       - name: "Creating Sub interfaces on Spine interface node 201"
         aci_rest:
-                 hostname: "{{hostname}}"
+                 hostname: apic1
                  username: "{{username}}"
                  password: "{{password}}"
                  validate_certs: false
@@ -258,7 +258,7 @@
                          mtu: inherit
       - name: "Creating Sub interfaces on Spine interface node 201"
         aci_rest:
-                   hostname: "{{hostname}}"
+                   hostname: "apic1
                    username: "{{username}}"
                    password: "{{password}}"
                    validate_certs: false
@@ -270,7 +270,7 @@
                            descr: ""
       - name: "Creating ospf interface profile for multipod"
         aci_rest:
-                   hostname: "{{hostname}}"
+                   hostname: apic1
                    username: "{{username}}"
                    password: "{{password}}"
                    validate_certs: false
@@ -297,7 +297,7 @@
 
       - name: "assigning OSPF interface profile to L3out interface profile"
         aci_rest:
-             hostname: "{{hostname}}"
+             hostname: apic1
              username: "{{username}}"
              password: "{{password}}"
              validate_certs: false
@@ -321,7 +321,7 @@
                                 }
       - name: "Creating external EPG for Multipod l3out"
         aci_rest:
-           hostname: "{{hostname}}"
+           hostname: apic1
            username: "{{username}}"
            password: "{{password}}"
            validate_certs: false
