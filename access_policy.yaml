@@ -1,0 +1,302 @@
+---
+  - name: "Building multipod access policy for Fab3"
+    hosts: apic1
+    connection: local
+    gather_facts: no
+    tasks:
+        - name: "Creatign a vlan pool name Multipod-vlan "
+          aci_vlan_pool:
+            hostname: "{{hostname}}"
+            username: "{{username}}"
+            password: "{{password}}"
+            validate_certs: false
+            pool: Multipod-vlan1                                     # Name of the vlan pool
+            pool_allocation_mode: static
+            description: multipod_vlan_pool
+            state: present
+        - name: "creating encap block vlan range 2-10"
+          aci_vlan_pool_encap_block:
+              hostname: "{{hostname}}"
+              username: "{{username}}"
+              password: "{{password}}"
+              validate_certs: false
+              block_name: Multipod-vlan1
+              pool: Multipod-vlan1
+              pool_allocation_mode: static                      #allocation mode of the vlan pool
+              block_start: 2
+              block_end: 10
+              state: present
+        - name: "Creating Layer3 Domain name Multipod-L3 "
+          aci_domain:
+              hostname: "{{hostname}}"
+              username: "{{username}}"
+              password: "{{password}}"
+              validate_certs: false
+              domain: Multipod-L3_1                            # name of the physical domain
+              domain_type: l3dom
+              state: present
+        - name: "Associating vlan pool Multipod-vlan to domain Multipod-L3"             # here im associating the vlan pool to domain
+          aci_domain_to_vlan_pool:
+              hostname: "{{hostname}}"
+              username: "{{username}}"
+              password: "{{password}}"
+              validate_certs: false
+              domain: Multipod-L3_1
+              domain_type: l3dom
+              pool_allocation_mode: static
+              pool: Multipod-vlan1
+              state: present
+        - name: "Creating ACI AEP name AAEP-Multipod "
+          aci_aep:
+              hostname: "{{hostname}}"
+              username: "{{username}}"
+              password: "{{password}}"
+              validate_certs: false
+              aep: AAEP-Multipod-1
+              state: present
+        - name: "Associating AEP to Domain"
+          aci_aep_to_domain:
+              hostname: "{{hostname}}"
+              username: "{{username}}"
+              password: "{{password}}"
+              validate_certs: false
+              aep:  AAEP-Multipod-1
+              domain: Multipod-L3_1
+              domain_type: l3dom
+              state: present
+        - name: "Creating Access Interface Policy group for the spine Interface"
+          aci_rest:
+              hostname: "{{hostname}}"
+              username: "{{username}}"
+              password: "{{password}}"
+              validate_certs: false
+              method: post
+              path: /api/mo/uni/infra/funcprof/.json
+              content:
+                infraSpAccPortGrp:
+                  attributes:
+                    name: Spine-IPN-If-Pol-1
+        - name: "Assigning AAEP to SPine interface policy-group"
+          aci_rest:
+            hostname: "{{hostname}}"
+            username: "{{username}}"
+            password: "{{password}}"
+            validate_certs: false
+            method: post
+            path: /api/mo/uni/infra/funcprof/spaccportgrp-Spine-IPN-If-Pol-1/.json
+            content:
+              infraRsAttEntP:
+                attributes:
+                    tDn: uni/infra/attentp-AAEP-Multipod-1
+        - name: "Creating Spine intefrace profile"
+          aci_rest:
+            hostname: "{{hostname}}"
+            username: "{{username}}"
+            password: "{{password}}"
+            validate_certs: false
+            method: post
+            path: /api/mo/uni/infra/.json
+            content:
+              infraSpAccPortP:
+                attributes:
+                    name: spine_IPN-Link-1
+        - name: "Creating Spine intefrace selector name"
+          aci_rest:
+             hostname: "{{hostname}}"
+             username: "{{username}}"
+             password: "{{password}}"
+             validate_certs: false
+             method: post
+             path: /api/mo/uni/infra/spaccportprof-spine_IPN-Link-1/.json
+             content:
+               infraSHPortS:
+                 attributes:
+                     name: 1-16_1
+                     type: range
+        - name: "Assigning policy-group to Spine profile"
+          aci_rest:
+               hostname: "{{hostname}}"
+               username: "{{username}}"
+               password: "{{password}}"
+               validate_certs: false
+               method: post
+               path: /api/mo/uni/infra/spaccportprof-spine_IPN-Link-1/shports-1-16_1-typ-range/.json
+               content:
+                 infraRsSpAccGrp:
+                   attributes:
+                     tDn: uni/infra/funcprof/spaccportgrp-Spine-IPN-If-Pol-1
+        - name: "selecting interface e1/16 on  Spine profile"
+          aci_rest:
+               hostname: "{{hostname}}"
+               username: "{{username}}"
+               password: "{{password}}"
+               validate_certs: false
+               method: post
+               path: /api/mo/uni/infra/spaccportprof-spine_IPN-Link-1/shports-1-16_1-typ-range/.json
+               content:
+                 infraPortBlk:
+                   attributes:
+                     name: block2
+                     toCard: "1"
+                     toPort: "16"
+                     fromCard: "1"
+                     fromPort: "16"
+        - name: "creating Spine switch profile"
+          aci_rest:
+            hostname: "{{hostname}}"
+            username: "{{username}}"
+            password: "{{password}}"
+            validate_certs: false
+            method: post
+            path: /api/mo/uni/infra/.json
+            content:
+              infraSpineP:
+                attributes:
+                    name: AllSpine_1
+        - name: "creating Spine switch selector"
+          aci_rest:
+            hostname: "{{hostname}}"
+            username: "{{username}}"
+            password: "{{password}}"
+            validate_certs: false
+            method: post
+            path: /api/mo/uni/infra/spprof-AllSpine_1/.json
+            content:
+              infraSpineS:
+                attributes:
+                    name: AllSpine_1
+                    type: range
+        - name: "Assigning interface profile to spine switch profile"
+          aci_rest:
+                 hostname: "{{hostname}}"
+                 username: "{{username}}"
+                 password: "{{password}}"
+                 validate_certs: false
+                 method: post
+                 path: /api/mo/uni/infra/spprof-AllSpine_1/.json
+                 content:
+                     infraRsSpAccPortP:
+                       attributes:
+                         tDn: uni/infra/spaccportprof-spine_IPN-Link-1
+        - name: "Selecting spines in  spine switch profile"
+          aci_rest:
+               hostname: "{{hostname}}"
+               username: "{{username}}"
+               password: "{{password}}"
+               validate_certs: false
+               method: post
+               path: /api/mo/uni/infra/spprof-AllSpine_1/spines-AllSpine_1-typ-range/.json
+               content:
+                   infraNodeBlk:
+                     attributes:
+                       name: MULTIPOD-SPINE-SWITCH-201-202
+                       from_: "201"
+                       to_: "202"
+        - name: "Creating Pod 2 Tep pool "
+          aci_rest:
+               hostname: "{{hostname}}"
+               username: "{{username}}"
+               password: "{{password}}"
+               validate_certs: false
+               method: post
+               path: /api/mo/uni/controller/setuppol/.json
+               content:
+                   fabricSetupP:
+                     attributes:
+                       podId: "2"
+                       tepPool: "10.1.0.0/16"
+        - name: "Creating Fabric external profile"
+          aci_rest:
+             hostname: "{{hostname}}"
+             username: "{{username}}"
+             password: "{{password}}"
+             validate_certs: false
+             method: post
+             path: /api/mo/uni/tn-infra/.json
+             content:
+                     "fvFabricExtConnP": {
+                       "attributes": {
+                         "id": "1",
+                         "rt": "extended:as2-nn4:5:16",
+                         "siteId": "0"
+                       },
+                       "children": [{
+                           "l3extFabricExtRoutingP": {
+                             "attributes ": {
+                             "name": "multipodL3Out_RoutingProfile",
+                             "rn": "fabricExtRoutingP-multipodL3Out_RoutingProfile"
+                           },
+                           "children": [{
+                             "l3extSubnet": {
+                               "attributes": {
+                                 "aggregate": "",
+                                 "ip": "172.16.15.3/24",
+                                 "scope": "import-security",
+                               }
+                             }
+                           }, {
+                             "l3extSubnet": {
+                               "attributes": {
+                                 "aggregate": "",
+                                 "ip": "172.16.11.2/24",
+                                 "scope": "import-security"
+                               }
+                             }
+                           }, {
+                             "l3extSubnet": {
+                               "attributes": {
+                                 "aggregate": "",
+                                 "ip": "172.16.10.2/24",
+                                 "scope": "import-security",
+                               }
+                             }
+                           }, {
+                             "l3extSubnet": {
+                               "attributes": {
+                                 "aggregate": "",
+                                 "ip": "172.16.12.2/24",
+                                 "scope": "import-security"
+                               }
+                             }
+                           }]
+                         }
+                       },
+                       {
+                         "fvPodConnP": {
+                           "attributes": {
+                             "childAction": "",
+                             "id": "2",
+                             "rn": "podConnP-2",
+                           },
+                           "children": [{
+                             "fvIp": {
+                               "attributes": {
+                                 "addr": "172.17.17.1/32",
+                               }
+                             }
+                           }]
+                         }
+                       },
+                       {
+                         "fvPodConnP": {
+                           "attributes": {
+                             "childAction": "",
+                             "id": "1",
+                             "rn": "podConnP-1",
+                           },
+                           "children": [{
+                             "fvIp": {
+                               "attributes": {
+                                 "addr": "172.16.16.1/32",
+                               }
+                             }
+                           }]
+                         }
+                       },
+                       {
+                         "fvPeeringP": {
+                           "attributes": {
+                             "type": "automatic_with_full_mesh",
+                           }}
+                        }
+                        ] }
